@@ -1,3 +1,5 @@
+<?xml version="1.0"?>
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
@@ -17,9 +19,10 @@
     <url>https://github.com/AntaTom/Clu-HitMan</url>
     <inceptionYear>2012</inceptionYear>
 	<description>
-        Provide a hitman command-line utility that may help kill stuck processes:
-        Starts another process 
-        Listens for requests from other process to be killed (may be postponed).
+        Provide a command-line utility that can kill stuck processes:
+        Starts another process, giving connection details
+        Other process requests to be killed after a certain time
+        Other process requests postponed kill
 	</description>
     <licenses>
         <license>
@@ -30,15 +33,16 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:https://github.com/AntaTom/Clu-HitMan.git</connection>
-    	<developerConnection>scm:git:https://github.com/AntaTom/Clu-HitMan.git</developerConnection>
+        <!-- scm:git:https://github.com/AntaTom/Clu-HitMan.git -->
+        <connection>scm:git:git@github.com:AntaTom/Clu-HitMan.git</connection>
+        <developerConnection>scm:git:git@github.com:AntaTom/Clu-HitMan.git</developerConnection>
         <url>https://github.com/AntaTom/Clu-HitMan</url>
     </scm>
-    <!-- FixMe
+
     <issueManagement>
-        <system>FixMe</system>
-        <url>http://code.google.com/p/test-data-control/issues/list</url>
-    </issueManagement>-->
+        <system>GitHub Issues</system>
+        <url>https://github.com/AntaTom/Clu-HitMan/issues</url>
+    </issueManagement>
 
 
 	<developers>
@@ -54,6 +58,10 @@
 		</developer>
 	</developers>
 
+	<properties>
+		<!--parent project.build.sourceEncoding>UTF-8</project.build.sourceEncoding -->
+	</properties>
+
 	<build>
 		<plugins>
             <plugin>
@@ -64,28 +72,46 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-				<plugin>
-					<artifactId>maven-assembly-plugin</artifactId>
-					<configuration>
-						<archive>
-							<manifest>
-								<!-- <mainClass>no.antares.kickstart.KickStart</mainClass> -->
-								<mainClass>no.antares.clutil.hitman.Main</mainClass>
-							</manifest>
-						</archive>
-						<descriptorRefs>
-							<descriptorRef>jar-with-dependencies</descriptorRef>
-						</descriptorRefs>
-					</configuration>
-					<executions>
-						<execution>
-							<phase>install</phase>
-							<goals>
-								<goal>single</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>no.antares.clutil.hitman.Main</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>install</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.github.github</groupId>
+				<artifactId>downloads-maven-plugin</artifactId>
+				<version>0.6</version>
+				<configuration>
+					<description>Official ${project.name} build of the ${project.version} release</description>
+					<override>true</override>
+					<includeAttached>true</includeAttached>
+					<server>github-AntaTom</server>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>upload</goal>
+						</goals>
+						<phase>install</phase>
+					</execution>
+				</executions>
+			</plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
@@ -106,15 +132,15 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <!-- configuration>
+                <configuration>
                     <includes>
                         <include>${basedir}/LICENSE</include>
                         <include>${basedir}/NOTICE</include>
                         <include>**</include>
                     </includes>
-                </configuration -->
+                </configuration>
             </plugin>
-            <!-- plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <executions>
@@ -129,7 +155,18 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin> -->
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
 	</build>
 

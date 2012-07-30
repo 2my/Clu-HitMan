@@ -1,14 +1,32 @@
+/* MessageChannel.java
+   Copyright 2012 Tommy Skodje (http://www.antares.no)
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
 package no.antares.clutil.hitman;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+/** Channel for receiving and sending Message(s).
+ * @author tommy skodje
+ */
 class MessageChannel implements Closeable {
 	private final ServerSocket serverSocket;
 	private static final String HOST	= "localhost";
 
-	/**  */
+	/** Open a channel - close when done */
 	protected static MessageChannel openInbound( int port ) {
 		try {
 			return new MessageChannel( new ServerSocket( port ) );
@@ -17,34 +35,20 @@ class MessageChannel implements Closeable {
 		}
 	}
 
-	protected static void send( int port, String message ) throws IOException {
-        Socket kkSocket = null;
-        PrintWriter out = null;
-        try {
-            kkSocket = new Socket( HOST, port );
-            out = new PrintWriter(kkSocket.getOutputStream(), true);
-            out.println( message );
-            /*
-        	BufferedReader in = new BufferedReader(new InputStreamReader(kkSocket.getInputStream()));
-            String fromServer;
-            while ((fromServer = in.readLine()) != null) {
-                System.out.println("Server: " + fromServer);
-                if (fromServer.equals("Bye."))
-                    break;
-            }
-            close( in );*/
-        } catch (IOException e) {
-            System.err.println( "Couldn't get I/O for the connection to: " + HOST );
-        } finally {
-            close( out );
-            close( kkSocket );
-        }
-    }
-
 	private MessageChannel( ServerSocket serverSocket ) {
 		this.serverSocket	= serverSocket;
 	}
 
+	/** Close the channel */
+	public void close() {
+		try {
+			if ( serverSocket != null)
+				serverSocket.close();
+		} catch (IOException ioe) {
+		}
+	}
+
+	/** Blocks while waiting for message */
 	protected Message waitForNextMessage() {
 		Socket clientSocket = null;
 		BufferedReader in = null;
@@ -72,13 +76,30 @@ class MessageChannel implements Closeable {
 		}
 		return Message.EMPTY;
 	}
-	public void close() {
-		try {
-			if ( serverSocket != null)
-				serverSocket.close();
-		} catch (IOException ioe) {
-		}
-	}
+
+	protected static void send( int port, String message ) throws IOException {
+        Socket kkSocket = null;
+        PrintWriter out = null;
+        try {
+            kkSocket = new Socket( HOST, port );
+            out = new PrintWriter(kkSocket.getOutputStream(), true);
+            out.println( message );
+            /*
+        	BufferedReader in = new BufferedReader(new InputStreamReader(kkSocket.getInputStream()));
+            String fromServer;
+            while ((fromServer = in.readLine()) != null) {
+                System.out.println("Server: " + fromServer);
+                if (fromServer.equals("Bye."))
+                    break;
+            }
+            close( in );*/
+        } catch (IOException e) {
+            System.err.println( "Couldn't get I/O for the connection to: " + HOST );
+        } finally {
+            close( out );
+            close( kkSocket );
+        }
+    }
 
 	private static void close(Closeable s) {
 		try {
