@@ -74,6 +74,9 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
+				<!-- release with:
+				mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging -DpomFile=pom.xml -Dfile=target/clu.hitman-0.5-jar-with-dependencies.jar -Dclassifier=jar-with-dependencies
+				-->
 				<configuration>
 					<archive>
 						<manifest>
@@ -86,7 +89,7 @@
 				</configuration>
 				<executions>
 					<execution>
-						<phase>install</phase>
+						<phase>package</phase>
 						<goals>
 							<goal>single</goal>
 						</goals>
