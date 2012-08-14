@@ -20,7 +20,7 @@ package no.antares.clutil.hitman;
  * terminates process after deadline (that may be extended).
  * @author tommy skodje
  */
-class HitMan {
+public class HitMan {
 	private static final int ticksPerSecond	= 1000;
 
 	private final ProcessControl process;
@@ -32,7 +32,7 @@ class HitMan {
 	};
 
 	/** Set up deadLine checker and start external process */
-	protected static void runHitMan( int port, String command ) {
+	public static void runHitMan( int port, String command ) {
 		MessageChannel channel	= MessageChannel.openInbound( port );
 		try {
 			HitMan hitMan	= new HitMan( command );

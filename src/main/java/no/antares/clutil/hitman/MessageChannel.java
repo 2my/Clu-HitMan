@@ -22,9 +22,38 @@ import java.net.Socket;
 /** Channel for receiving and sending Message(s).
  * @author tommy skodje
  */
-class MessageChannel implements Closeable {
+public class MessageChannel implements Closeable {
 	private final ServerSocket serverSocket;
-	private static final String HOST	= "localhost";
+
+	/** Send message to HitMan */
+	public static void send( int port, String message ) throws IOException {
+		send( "localhost", port, message );
+	}
+
+	/** Send message to HitMan (on localhost) */
+	public static void send( String host, int port, String message ) throws IOException {
+        Socket kkSocket = null;
+        PrintWriter out = null;
+        try {
+            kkSocket = new Socket( host, port );
+            out = new PrintWriter(kkSocket.getOutputStream(), true);
+            out.println( message );
+            /*
+        	BufferedReader in = new BufferedReader(new InputStreamReader(kkSocket.getInputStream()));
+            String fromServer;
+            while ((fromServer = in.readLine()) != null) {
+                System.out.println("Server: " + fromServer);
+                if (fromServer.equals("Bye."))
+                    break;
+            }
+            close( in );*/
+        } catch (IOException e) {
+            System.err.println( "Couldn't get I/O for the connection to: " + host );
+        } finally {
+            close( out );
+            close( kkSocket );
+        }
+    }
 
 	/** Open a channel - close when done */
 	protected static MessageChannel openInbound( int port ) {
@@ -76,30 +105,6 @@ class MessageChannel implements Closeable {
 		}
 		return Message.EMPTY;
 	}
-
-	protected static void send( int port, String message ) throws IOException {
-        Socket kkSocket = null;
-        PrintWriter out = null;
-        try {
-            kkSocket = new Socket( HOST, port );
-            out = new PrintWriter(kkSocket.getOutputStream(), true);
-            out.println( message );
-            /*
-        	BufferedReader in = new BufferedReader(new InputStreamReader(kkSocket.getInputStream()));
-            String fromServer;
-            while ((fromServer = in.readLine()) != null) {
-                System.out.println("Server: " + fromServer);
-                if (fromServer.equals("Bye."))
-                    break;
-            }
-            close( in );*/
-        } catch (IOException e) {
-            System.err.println( "Couldn't get I/O for the connection to: " + HOST );
-        } finally {
-            close( out );
-            close( kkSocket );
-        }
-    }
 
 	private static void close(Closeable s) {
 		try {
