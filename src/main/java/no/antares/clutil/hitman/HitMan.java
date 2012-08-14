@@ -55,6 +55,7 @@ public class HitMan {
 	/** Process messages on channel  */
 	private void messageLoop( MessageChannel channel ) {
 		boolean stopped = false;
+		// TODO: implement terminate message as well
 		while ( ! stopped ) {
 			Message message	= channel.waitForNextMessage();
 			if ( message.isExtension() ) {
