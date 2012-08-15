@@ -15,6 +15,8 @@
 */
 package no.antares.clutil.hitman;
 
+import java.util.Timer;
+
 
 /** HitMan starts an external process, then listens for "HIT ME" messages on port, 
  * terminates process after deadline (that may be extended).
@@ -22,14 +24,6 @@ package no.antares.clutil.hitman;
  */
 public class HitMan {
 	private static final int ticksPerSecond	= 1000;
-
-	private final ProcessControl process;
-
-	private final DeadLine deadLine	= new DeadLine() {
-		void expired() {
-			process.restart();
-		}
-	};
 
 	/** Set up deadLine checker and start external process */
 	public static void runHitMan( int port, String command ) {
@@ -42,6 +36,22 @@ public class HitMan {
 		}
 	}
 
+	private final ProcessControl process;
+	private final Timer restarter;
+	boolean terminated = false;
+
+	private final DeadLine restartAtExpiry	= new DeadLine() {
+		void expired() {
+			process.restart();
+		}
+	};
+	private final DeadLine shutdownAtExpiry	= new DeadLine() {
+		void expired() {
+			process.kill();
+			terminated	= true;
+		}
+	};
+
 	/** Start external process and deadLine checker */
 	private HitMan( String command ) {
 		process	= new ProcessControl( command );
@@ -49,19 +59,23 @@ public class HitMan {
 
 		process.start();
 
-		deadLine.checkAtFixedRate( 15 * ticksPerSecond ).startIn( 15 * ticksPerSecond );
+		restarter	= DeadLineChecker.periodical( restartAtExpiry, 5 * ticksPerSecond ).startInMillis( 5 * ticksPerSecond );
 	}
 
 	/** Process messages on channel  */
 	private void messageLoop( MessageChannel channel ) {
-		boolean stopped = false;
-		// TODO: implement terminate message as well
-		while ( ! stopped ) {
+		while ( ! terminated ) {
 			Message message	= channel.waitForNextMessage();
-			if ( message.isExtension() ) {
-				deadLine.extend( message );
+			if ( message.isExtension() )
+				restartAtExpiry.extend( message );
+			if ( message.isTermination() ) {
+				DeadLineChecker.oneOff( shutdownAtExpiry ).startInMillis( message.deadLine() - System.currentTimeMillis() );
+				restarter.cancel();
 			}
 		}
+	}
+	public static void main(String[] args) throws Exception {
+		runHitMan( 5555, "/Applications/TextWrangler.app/Contents/MacOS/TextWrangler" );
 	}
 
 }

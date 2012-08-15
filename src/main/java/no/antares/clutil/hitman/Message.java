@@ -21,29 +21,55 @@ import org.apache.commons.lang.StringUtils;
  * @author tommy skodje
  */
 public class Message {
-	public static final String DEADLINE_SEMAFOR	= "HIT ME IN ";
+	public static enum Semafor {
+		NONE( "" ),
+		DEADLINE( "HIT ME IN " ),
+		TERMINATE( "HIT US IN " )
+		;
+
+		private final String msgStart;
+
+		private Semafor( String msgStart ) {
+			this.msgStart	= msgStart;
+		}
+
+		public String messageAfterSemafor( String msg ) {
+			return msg.replace( msgStart, "" );
+		}
+	}
 
 	public static final Message EMPTY	= new Message( "" );
 
 	private static final int ticksPerSecond	= 1000;
 
 	final String message;
+	final Semafor messageType;
 
 	/** Parses argument and interpretes message */
 	protected Message(String message) {
 		this.message = message;
+		if ( StringUtils.isBlank( this.message ) )
+			messageType	= Semafor.NONE;
+		else if ( this.message.startsWith( Semafor.DEADLINE.msgStart ) )
+			messageType	= Semafor.DEADLINE;
+		else if ( this.message.startsWith( Semafor.TERMINATE.msgStart ) )
+			messageType	= Semafor.TERMINATE;
+		else
+			messageType	= Semafor.NONE;
 	}
 
 	protected boolean isExtension() {
-		if ( StringUtils.isBlank( this.message ) )
-			return false;
-		return this.message.startsWith( DEADLINE_SEMAFOR );
+		return Semafor.DEADLINE == this.messageType;
+	}
+
+	protected boolean isTermination() {
+		return Semafor.TERMINATE == this.messageType;
 	}
 
 	protected long deadLine() {
-		String nSeconds	= this.message.replace( DEADLINE_SEMAFOR, "" );
+		String nSeconds	= messageType.messageAfterSemafor( this.message );
 		int seconds2wait	= Integer.parseInt( nSeconds );
-		return System.currentTimeMillis() + ( seconds2wait * ticksPerSecond );
+		return ( seconds2wait * ticksPerSecond ) + System.currentTimeMillis();
 	}
 
 

@@ -28,11 +28,6 @@ abstract class DeadLine {
 	/** Implementor decides what to do when expired */
 	abstract void expired();
 
-	/** Builder of DeadLine - construct and start with checkAtFixedRate().startIn() */
-	DeadLineChecker checkAtFixedRate( long periodInMillis ) {
-		return new DeadLineChecker( this, periodInMillis );
-	}
-
 	/** Extend timeout */
 	protected void extend( Message message ) {
 		synchronized ( deadLineMonitor ) {

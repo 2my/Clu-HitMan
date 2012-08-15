@@ -18,26 +18,41 @@ package no.antares.clutil.hitman;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/** Checks deadline periodically
+/** Checks deadline periodically, or once
  * @author tommy skodje
 */
 class DeadLineChecker {
 	final long periodInMillis;
 	final DeadLine deadLine;
 
-	protected DeadLineChecker( DeadLine deadLine, long periodInMillis ) {
+	/** Periodical check */
+	protected static DeadLineChecker periodical( DeadLine deadLine, long periodInMillis ) {
+		return new DeadLineChecker( deadLine, periodInMillis );
+	}
+	/** One-time check */
+	protected static DeadLineChecker oneOff( DeadLine deadLine ) {
+		return new DeadLineChecker( deadLine, -1 );
+	}
+
+	private DeadLineChecker( DeadLine deadLine, long periodInMillis ) {
 		this.periodInMillis = periodInMillis;
 		this.deadLine = deadLine;
 	}
 
-	void startIn( long initialDelayInMillis ) {
+
+	/** Start after initial delay */
+	public Timer startInMillis( long initialDelayInMillis ) {
 		final TimerTask killerTask	= new TimerTask() {
 	        public void run() {
 	        	deadLine.check();
 	        }
 	    };
 		Timer timer = new Timer();
-		timer.scheduleAtFixedRate( killerTask, initialDelayInMillis, this.periodInMillis );
+		if ( 0 < periodInMillis )
+			timer.scheduleAtFixedRate( killerTask, initialDelayInMillis, this.periodInMillis );
+		else
+			timer.schedule( killerTask, initialDelayInMillis );
+		return timer;
 	}
 
 }
