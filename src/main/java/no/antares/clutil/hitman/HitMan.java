@@ -38,7 +38,6 @@ public class HitMan {
 
 	private final ProcessControl process;
 	private final Timer restarter;
-	boolean terminated = false;
 
 	private final DeadLine restartAtExpiry	= new DeadLine() {
 		void expired() {
@@ -48,7 +47,7 @@ public class HitMan {
 	private final DeadLine shutdownAtExpiry	= new DeadLine() {
 		void expired() {
 			process.kill();
-			terminated	= true;
+			System.exit( 0 );
 		}
 	};
 
@@ -64,18 +63,22 @@ public class HitMan {
 
 	/** Process messages on channel  */
 	private void messageLoop( MessageChannel channel ) {
+		boolean terminated	= false;
 		while ( ! terminated ) {
 			Message message	= channel.waitForNextMessage();
 			if ( message.isExtension() )
 				restartAtExpiry.extend( message );
 			if ( message.isTermination() ) {
+				shutdownAtExpiry.extend( message );
 				DeadLineChecker.oneOff( shutdownAtExpiry ).startInMillis( message.deadLine() - System.currentTimeMillis() );
 				restarter.cancel();
+				return;
 			}
 		}
 	}
 	public static void main(String[] args) throws Exception {
 		runHitMan( 5555, "/Applications/TextWrangler.app/Contents/MacOS/TextWrangler" );
+		// MessageChannel.send( 5555, "HIT ME IN 2" );
 	}
 
 }
