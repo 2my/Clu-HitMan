@@ -33,8 +33,8 @@ public class Message {
 			this.msgStart	= msgStart;
 		}
 
-		public Message inSeconds( int nSeconds ) {
-			return new Message( msgStart + nSeconds );
+		public String inSeconds( int nSeconds ) {
+			return msgStart + nSeconds;
 		}
 
 		public String messageAfterSemafor( String msg ) {
