@@ -27,10 +27,14 @@ public class Message {
 		TERMINATE( "HIT US IN " )
 		;
 
-		private final String msgStart;
+		public final String msgStart;
 
 		private Semafor( String msgStart ) {
 			this.msgStart	= msgStart;
+		}
+
+		public Message inSeconds( int nSeconds ) {
+			return new Message( msgStart + nSeconds );
 		}
 
 		public String messageAfterSemafor( String msg ) {
