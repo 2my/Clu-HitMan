@@ -70,10 +70,13 @@ public class Message {
 		return Semafor.TERMINATE == this.messageType;
 	}
 
-	protected long deadLine() {
+	protected long waitMillis() {
 		String nSeconds	= messageType.messageAfterSemafor( this.message );
 		int seconds2wait	= Integer.parseInt( nSeconds );
-		return ( seconds2wait * ticksPerSecond ) + System.currentTimeMillis();
+		return ( seconds2wait * ticksPerSecond );
+	}
+	protected long deadLine() {
+		return waitMillis() + System.currentTimeMillis();
 	}
 
 

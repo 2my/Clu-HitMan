@@ -70,7 +70,7 @@ public class HitMan {
 				restartAtExpiry.extend( message );
 			if ( message.isTermination() ) {
 				shutdownAtExpiry.extend( message );
-				DeadLineChecker.oneOff( shutdownAtExpiry ).startInMillis( message.deadLine() - System.currentTimeMillis() );
+				DeadLineChecker.oneOff( shutdownAtExpiry ).startInMillis( message.waitMillis() + 100 );
 				restarter.cancel();
 				return;
 			}
