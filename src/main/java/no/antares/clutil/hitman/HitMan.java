@@ -16,6 +16,7 @@
 package no.antares.clutil.hitman;
 
 import java.util.Timer;
+import java.util.TimerTask;
 
 
 /** HitMan starts an external process, then listens for "HIT ME" messages on port, 
@@ -44,8 +45,8 @@ public class HitMan {
 			process.restart();
 		}
 	};
-	private final DeadLine shutdownAtExpiry	= new DeadLine() {
-		void expired() {
+	private final TimerTask shutdownAtExpiry	= new TimerTask() {
+		public void run() {
 			process.kill();
 			System.exit( 0 );
 		}
@@ -69,8 +70,7 @@ public class HitMan {
 			if ( message.isExtension() )
 				restartAtExpiry.extend( message );
 			if ( message.isTermination() ) {
-				shutdownAtExpiry.extend( message );
-				DeadLineChecker.oneOff( shutdownAtExpiry ).startInMillis( message.waitMillis() + 100 );
+				( new Timer() ).schedule( shutdownAtExpiry, message.waitMillis() + 100 );
 				restarter.cancel();
 				return;
 			}

@@ -22,9 +22,9 @@ import org.apache.commons.lang.StringUtils;
  * ( port+cmd ): start hitMan (on port)
  * ( no port ): print help / usage
 
-java -jar "target/clu.hitman-0.6-SNAPSHOT-jar-with-dependencies.jar" -port 5555 -msg "HIT ME IN 5"
-java -jar "target/clu.hitman-0.6-SNAPSHOT-jar-with-dependencies.jar" -port 5555 -cmd "C:\Program Files\Internet Explorer\iexplore.exe"
-java -jar "target/clu.hitman-0.6-SNAPSHOT-jar-with-dependencies.jar" -port 5555 -cmd /Applications/TextWrangler.app/Contents/MacOS/TextWrangler
+java -jar "target/clu.hitman-0.6.1-SNAPSHOT-jar-with-dependencies.jar" -port 5555 -msg "HIT ME IN 2"
+java -jar "target/clu.hitman-0.6.1-SNAPSHOT-jar-with-dependencies.jar" -port 5555 -cmd "C:\Program Files\Internet Explorer\iexplore.exe"
+java -jar "target/clu.hitman-0.6.1-SNAPSHOT-jar-with-dependencies.jar" -port 5555 -cmd /Applications/TextWrangler.app/Contents/MacOS/TextWrangler
  * @author tommy skodje
  */
 public class Main {
