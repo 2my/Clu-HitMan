@@ -18,6 +18,8 @@ package no.antares.clutil.hitman;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.apache.log4j.Logger;
+
 
 /** HitMan starts an external process, then listens for "HIT ME" messages on port, 
  * terminates process after deadline (that may be extended).
@@ -25,6 +27,7 @@ import java.util.TimerTask;
  */
 public class HitMan {
 	private static final int ticksPerSecond	= 1000;
+	private static final Logger logger	= Logger.getLogger( HitMan.class.getName() );
 
 	/** Set up deadLine checker and start external process */
 	public static void runHitMan( int port, String command ) {
@@ -67,6 +70,7 @@ public class HitMan {
 		boolean terminated	= false;
 		while ( ! terminated ) {
 			Message message	= channel.waitForNextMessage();
+			logger.trace( "messageLoop() got " + message );
 			if ( message.isExtension() )
 				restartAtExpiry.extend( message );
 			if ( message.isTermination() ) {

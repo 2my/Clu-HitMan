@@ -16,6 +16,7 @@
 package no.antares.clutil.hitman;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /** Main class for HitMan utility has 3 functions based on command line arguments
  * ( port+message ): send message to hitMan (on port)
@@ -28,12 +29,13 @@ java -jar "target/clu.hitman-0.6.1-SNAPSHOT-jar-with-dependencies.jar" -port 555
  * @author tommy skodje
  */
 public class Main {
+	private static final Logger logger	= Logger.getLogger( Main.class.getName() );
 
 	/**  */
 	public static void main(String[] args) throws Exception {
 		CommandLineOptions options	= new CommandLineOptions( args );
 		if ( options.portNo != null ) {
-			System.err.println( options.toString() );
+			logger.trace( "main() with " + options.toString() );
 			if ( ! StringUtils.isBlank( options.command ) ) {
 				HitMan.runHitMan( options.portNo, options.command );
 			}

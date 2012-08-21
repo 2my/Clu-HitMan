@@ -79,5 +79,8 @@ public class Message {
 		return waitMillis() + System.currentTimeMillis();
 	}
 
+	@Override public String toString() {
+		return "Message: " + message;
+	}
 
 }

@@ -19,10 +19,13 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import org.apache.log4j.Logger;
+
 /** Channel for receiving and sending Message(s).
  * @author tommy skodje
  */
 public class MessageChannel implements Closeable {
+	private static final Logger logger	= Logger.getLogger( MessageChannel.class.getName() );
 	private final ServerSocket serverSocket;
 
 	/** Send message to HitMan */
@@ -48,7 +51,8 @@ public class MessageChannel implements Closeable {
             }
             close( in );*/
         } catch (IOException e) {
-            System.err.println( "Couldn't get I/O for the connection to: " + host );
+        	logger.error( "send() couldn not get I/O for the connection to: " + host + port, e );
+        	throw e;
         } finally {
             close( out );
             close( kkSocket );
@@ -60,6 +64,7 @@ public class MessageChannel implements Closeable {
 		try {
 			return new MessageChannel( new ServerSocket( port ) );
 		} catch (IOException e) {
+        	logger.fatal( "(): " + port, e );
 			throw new RuntimeException("Could not listen on port: " + port, e);
 		}
 	}
@@ -97,7 +102,7 @@ public class MessageChannel implements Closeable {
 				}*/
 			}
 		} catch (IOException e) {
-			System.err.println("Accept failed.");
+        	logger.error( "waitForNextMessage() got Exception", e );
 		} finally {
 			close( clientSocket );
 			close( out );
