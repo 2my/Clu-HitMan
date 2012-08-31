@@ -204,7 +204,7 @@
 									</goals>
 									<configuration>
 											<includes>
-													<include>${basedir}/src/main/scala/**</include>
+													<include>${basedir}/src/main/java/**</include>
 											</includes>
 									</configuration>
 							</execution>
