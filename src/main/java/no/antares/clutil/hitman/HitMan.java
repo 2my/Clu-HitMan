@@ -29,17 +29,6 @@ public class HitMan {
 	private static final int ticksPerSecond	= 1000;
 	private static final Logger logger	= Logger.getLogger( HitMan.class.getName() );
 
-	/** Set up deadLine checker and start external process */
-	public static void runHitMan( int port, String command ) {
-		MessageChannel channel	= MessageChannel.openInbound( port );
-		try {
-			HitMan hitMan	= new HitMan( command );
-			hitMan.messageLoop( channel );
-		} finally {
-			channel.close();
-		}
-	}
-
 	private final ProcessControl process;
 	private final Timer restarter;
 
@@ -48,25 +37,42 @@ public class HitMan {
 			process.restart();
 		}
 	};
-	private final TimerTask shutdownAtExpiry	= new TimerTask() {
+	private final TimerTask shutDownAll	= new TimerTask() {
 		public void run() {
 			process.kill();
 			System.exit( 0 );
 		}
 	};
+	private final Thread shutDownProcess	= new Thread() {
+		public void run() {
+			process.kill();
+	    }
+	};
+
+	/** Set up deadLine checker and start external process */
+	public static void runHitMan( int port, String command ) {
+		MessageChannel channel	= MessageChannel.openInbound( port );
+		try {
+			ProcessControl pc	= new ProcessControlImpl( command );
+			HitMan hitMan	= new HitMan( pc, 5 * ticksPerSecond );
+			hitMan.messageLoop( channel );
+		} finally {
+			channel.close();
+		}
+	}
 
 	/** Start external process and deadLine checker */
-	private HitMan( String command ) {
-		process	= new ProcessControl( command );
-		Runtime.getRuntime().addShutdownHook( process.killer );
+	protected HitMan( ProcessControl processControl, int periodInSeconds ) {
+		process	= processControl;
+		Runtime.getRuntime().addShutdownHook( shutDownProcess );
 
 		process.start();
 
-		restarter	= DeadLineChecker.periodical( restartAtExpiry, 5 * ticksPerSecond ).startInMillis( 5 * ticksPerSecond );
+		restarter	= DeadLineChecker.periodical( restartAtExpiry, periodInSeconds ).startInMillis( 2 * periodInSeconds );
 	}
 
 	/** Process messages on channel  */
-	private void messageLoop( MessageChannel channel ) {
+	protected void messageLoop( MessageChannel channel ) {
 		boolean terminated	= false;
 		while ( ! terminated ) {
 			Message message	= channel.waitForNextMessage();
@@ -74,12 +80,14 @@ public class HitMan {
 			if ( message.isExtension() )
 				restartAtExpiry.extend( message );
 			if ( message.isTermination() ) {
-				( new Timer() ).schedule( shutdownAtExpiry, message.waitMillis() + 100 );
+				int extraWait	= 100;
+				( new Timer() ).schedule( shutDownAll, message.waitMillis() + extraWait );
 				restarter.cancel();
 				return;
 			}
 		}
 	}
+
 	public static void main(String[] args) throws Exception {
 		runHitMan( 5555, "/Applications/TextWrangler.app/Contents/MacOS/TextWrangler" );
 		// MessageChannel.send( 5555, "HIT ME IN 2" );

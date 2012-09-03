@@ -1,4 +1,4 @@
-/* ProcessControl.java
+/* ProcessController.java
    Copyright 2012 Tommy Skodje (http://www.antares.no)
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,58 +15,18 @@
 */
 package no.antares.clutil.hitman;
 
-import org.apache.commons.lang.Validate;
-import org.apache.log4j.Logger;
-
-/** Start and kill an external process.
+/** Controls an external process.
  * @author tommy skodje
  */
-public class ProcessControl {
-	private static final Logger logger	= Logger.getLogger( ProcessControl.class.getName() );
+public interface ProcessControl {
 
-	Process process	= null;
-	private final String execStr;
+	/** Start the process. */
+	public abstract void start();
 
-	protected final Thread killer	= new Thread() {
-		public void run() {
-			kill();
-	    }
-	};
+	/** Kill the process. */
+	public abstract void kill();
 
-	/** Setup process to control with argument being a command-line string. */
-	public ProcessControl( String execStr ) {
-		logger.trace( "ProcessControl() " + execStr );
-		Validate.notNull( execStr, "ProcessControl( null )" );
-		this.execStr = execStr;
-	}
+	/** Kill + start the process. */
+	public abstract void restart();
 
-	/** Start the specified process. */
-	public void start() {
-		logger.info( "start() " + (process != null) );
-		if ( process != null )
-			return;
-		try {
-			process = Runtime.getRuntime().exec( execStr );  
-		} catch ( Throwable e ) {
-			logger.fatal( "start(): " + execStr, e );
-			throw new RuntimeException( "Error starting process: " + execStr, e);
-		}
-	}
-
-	/**  */
-	public void kill() {
-		logger.warn( "kill()" );
-		try {
-			if ( process != null )
-				process.destroy();
-		} catch ( Throwable e ) {
-			logger.fatal( "kill(): " + execStr, e );
-			throw new RuntimeException( "Error killing process: " + execStr, e);
-		}
-    	process	= null;
-    }
-	public void restart() {
-		kill();
-		start();
-	}
 }
