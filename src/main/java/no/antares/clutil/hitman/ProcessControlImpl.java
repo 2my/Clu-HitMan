@@ -1,4 +1,4 @@
-/* ProcessControl.java
+/* ProcessControlImpl.java
    Copyright 2012 Tommy Skodje (http://www.antares.no)
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,15 +29,15 @@ public class ProcessControlImpl implements ProcessControl {
 
 	/** Setup process to control with argument being a command-line string. */
 	public ProcessControlImpl( String execStr ) {
-		logger.trace( "ProcessControl() " + execStr );
-		Validate.notNull( execStr, "ProcessControl( null )" );
+		logger.trace( "ProcessControlImpl() " + execStr );
+		Validate.notNull( execStr, "ProcessControlImpl( null )" );
 		this.execStr = execStr;
 	}
 
 	/** @see no.antares.clutil.hitman.ProcessControl#start() */
 	@Override
 	public void start() {
-		logger.info( "start() " + (process != null) );
+		logger.info( "start() process started: " + (process != null) );
 		if ( process != null )
 			return;
 		try {
