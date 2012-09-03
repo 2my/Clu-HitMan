@@ -41,7 +41,7 @@ public class ProcessControlImpl implements ProcessControl {
 		if ( process != null )
 			return;
 		try {
-			process = Runtime.getRuntime().exec( execStr );  
+			process = Runtime.getRuntime().exec( execStr );
 		} catch ( Throwable e ) {
 			logger.fatal( "start(): " + execStr, e );
 			throw new RuntimeException( "Error starting process: " + execStr, e);
