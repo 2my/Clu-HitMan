@@ -29,4 +29,7 @@ public interface ProcessControl {
 	/** Kill + start the process. */
 	public abstract void restart();
 
+	/** System.exit. */
+	public abstract void shutDownAll();
+
 }

@@ -39,8 +39,7 @@ public class HitMan {
 	};
 	private final TimerTask shutDownAll	= new TimerTask() {
 		public void run() {
-			process.kill();
-			System.exit( 0 );
+			process.shutDownAll();
 		}
 	};
 	private final Thread shutDownProcess	= new Thread() {
@@ -50,11 +49,14 @@ public class HitMan {
 	};
 
 	/** Set up deadLine checker and start external process */
-	public static void runHitMan( int port, String command ) {
-		MessageChannel channel	= MessageChannel.openInbound( port );
+	public static void runHitMan( int port, String command, int periodInSeconds ) {
+		runHitMan( MessageChannel.openInbound( port ), new ProcessControlImpl( command ), periodInSeconds * ticksPerSecond );
+	}
+
+	/** Set up deadLine checker and start external process */
+	public static void runHitMan( MessageChannel channel, ProcessControl pc, int periodInMillis ) {
 		try {
-			ProcessControl pc	= new ProcessControlImpl( command );
-			HitMan hitMan	= new HitMan( pc, 5 * ticksPerSecond );
+			HitMan hitMan	= new HitMan( pc, periodInMillis );
 			hitMan.messageLoop( channel );
 		} finally {
 			channel.close();
@@ -62,13 +64,11 @@ public class HitMan {
 	}
 
 	/** Start external process and deadLine checker */
-	protected HitMan( ProcessControl processControl, int periodInSeconds ) {
+	protected HitMan( ProcessControl processControl, int periodInMillis ) {
 		process	= processControl;
 		Runtime.getRuntime().addShutdownHook( shutDownProcess );
-
 		process.start();
-
-		restarter	= DeadLineChecker.periodical( restartAtExpiry, periodInSeconds ).startInMillis( 2 * periodInSeconds );
+		restarter	= DeadLineChecker.periodical( restartAtExpiry, periodInMillis ).startInMillis( 2 * periodInMillis );
 	}
 
 	/** Process messages on channel  */
@@ -89,7 +89,7 @@ public class HitMan {
 	}
 
 	public static void main(String[] args) throws Exception {
-		runHitMan( 5555, "/Applications/TextWrangler.app/Contents/MacOS/TextWrangler" );
+		runHitMan( 5555, "/Applications/TextWrangler.app/Contents/MacOS/TextWrangler", 5 );
 		// MessageChannel.send( 5555, "HIT ME IN 2" );
 	}
 

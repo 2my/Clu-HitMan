@@ -35,8 +35,7 @@ public class ProcessControlImpl implements ProcessControl {
 	}
 
 	/** @see no.antares.clutil.hitman.ProcessControl#start() */
-	@Override
-	public void start() {
+	@Override public void start() {
 		logger.info( "start() process started: " + (process != null) );
 		if ( process != null )
 			return;
@@ -49,8 +48,7 @@ public class ProcessControlImpl implements ProcessControl {
 	}
 
 	/** @see no.antares.clutil.hitman.ProcessControl#kill() */
-	@Override
-	public void kill() {
+	@Override public void kill() {
 		logger.warn( "kill()" );
 		try {
 			if ( process != null )
@@ -61,10 +59,17 @@ public class ProcessControlImpl implements ProcessControl {
 		}
     	process	= null;
     }
+
 	/** @see no.antares.clutil.hitman.ProcessControl#restart() */
-	@Override
-	public void restart() {
+	@Override public void restart() {
 		kill();
 		start();
 	}
+
+	/** @see no.antares.clutil.hitman.ProcessControl#shutDownAll() */
+	@Override public void shutDownAll() {
+		kill();
+		System.exit( 0 );
+	}
+
 }

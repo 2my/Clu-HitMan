@@ -37,7 +37,7 @@ public class Main {
 		if ( options.portNo != null ) {
 			logger.trace( "main() with " + options.toString() );
 			if ( ! StringUtils.isBlank( options.command ) ) {
-				HitMan.runHitMan( options.portNo, options.command );
+				HitMan.runHitMan( options.portNo, options.command, 5 );
 			}
 			if ( ! StringUtils.isBlank( options.message ) ) {
 				MessageChannel.send( options.portNo, options.message );
