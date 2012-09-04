@@ -47,7 +47,7 @@ class DeadLineChecker {
 	        	deadLine.check();
 	        }
 	    };
-		Timer timer = new Timer();
+		Timer timer = new Timer( "KillerTask" );
 		if ( 0 < periodInMillis )
 			timer.scheduleAtFixedRate( killerTask, initialDelayInMillis, this.periodInMillis );
 		else
