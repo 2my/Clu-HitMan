@@ -13,7 +13,7 @@
 	<groupId>no.antares</groupId>
 	<artifactId>clu.hitman</artifactId>
 	<name>hitman</name>
-	<version>0.7</version>
+	<version>0.8-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<url>https://github.com/AntaTom/Clu-HitMan</url>
