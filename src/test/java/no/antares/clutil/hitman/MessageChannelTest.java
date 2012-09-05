@@ -26,8 +26,16 @@ public class MessageChannelTest {
 	@Test public void send() throws Exception {
 		String msg	= MockDeadLine.messageExpiringIn( 1 ).message;
 		channelThread.start();
-		MessageChannel.send( port, msg );
+		String response	= MessageChannel.send( port, msg );
 		Thread.sleep( sensibleWait );
+		assertThat( response, is( "" ) );
+		assertThat( received.size(), is( 1 ) );
+		assertThat( received.remove().message, is( msg ) );
+
+		msg	= Message.Semafor.PING.msgStart;
+		response	= MessageChannel.send( port, msg );
+		Thread.sleep( sensibleWait );
+		assertThat( response, is( "PONG" ) );
 		assertThat( received.size(), is( 1 ) );
 		assertThat( received.remove().message, is( msg ) );
 	}

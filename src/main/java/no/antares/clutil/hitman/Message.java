@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 public class Message {
 	public static enum Semafor {
 		NONE( "" ),
+		PING( "PING" ),
 		DEADLINE( "HIT ME IN " ),
 		TERMINATE( "HIT US IN " )
 		;
@@ -50,10 +51,12 @@ public class Message {
 	final Semafor messageType;
 
 	/** Parses argument and interpretes message */
-	protected Message(String message) {
+	protected Message( String message ) {
 		this.message = message;
 		if ( StringUtils.isBlank( this.message ) )
 			messageType	= Semafor.NONE;
+		else if ( this.message.startsWith( Semafor.PING.msgStart ) )
+			messageType	= Semafor.PING;
 		else if ( this.message.startsWith( Semafor.DEADLINE.msgStart ) )
 			messageType	= Semafor.DEADLINE;
 		else if ( this.message.startsWith( Semafor.TERMINATE.msgStart ) )
@@ -70,8 +73,14 @@ public class Message {
 		return Semafor.TERMINATE == this.messageType;
 	}
 
+	public boolean isPing() {
+		return Semafor.PING == this.messageType;
+	}
+
 	protected long waitMillis() {
 		String nSeconds	= messageType.messageAfterSemafor( this.message );
+		if ( StringUtils.isBlank( nSeconds ) )
+			return 0;
 		int seconds2wait	= Integer.parseInt( nSeconds );
 		return ( seconds2wait * ticksPerSecond );
 	}
