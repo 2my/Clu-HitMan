@@ -34,7 +34,7 @@ public class MessageChannel implements Closeable {
 		return send( "localhost", port, message );
 	}
 
-	/** Send message to HitMan (on localhost), @return response */
+	/** Send message to HitMan, @return response */
 	public static String send(String host, int port, String message) throws IOException {
 		Socket kkSocket = null;
 		PrintWriter out = null;
