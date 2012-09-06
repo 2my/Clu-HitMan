@@ -35,33 +35,33 @@ public class MessageChannel implements Closeable {
 	}
 
 	/** Send message to HitMan (on localhost), @return response */
-	public static String send( String host, int port, String message ) throws IOException {
+	public static String send(String host, int port, String message) throws IOException {
 		Socket kkSocket = null;
 		PrintWriter out = null;
 		BufferedReader in = null;
 		try {
-			kkSocket = new Socket( host, port );
+			kkSocket = new Socket(host, port);
 			out = new PrintWriter(kkSocket.getOutputStream(), true);
-			out.println( message );
+			out.println(message);
 
-			if ( StringUtils.isBlank( reply2( message ) ) )
+			if (StringUtils.isBlank(reply2(message)))
 				return "";
 
-			in = new BufferedReader(new InputStreamReader(kkSocket.getInputStream()));
-      StringBuffer reply	= new StringBuffer();
-      String fromServer;
-      while ((fromServer = in.readLine()) != null) {
-      	logger.trace( "received: " + fromServer );
-      	reply.append( fromServer );
-      }
-      return reply.toString();
+			in = new BufferedReader(new InputStreamReader( kkSocket.getInputStream()));
+			StringBuffer reply = new StringBuffer();
+			String fromServer;
+			while ((fromServer = in.readLine()) != null) {
+				logger.trace("received: " + fromServer);
+				reply.append(fromServer);
+			}
+			return reply.toString();
 		} catch (IOException e) {
-			logger.error( "send() couldn not get I/O for the connection to: " + host + port, e );
+			logger.error("send() couldn not get I/O for the connection to: " + host + port, e);
 			throw e;
 		} finally {
-			close( out );
-      close( in );
-			close( kkSocket );
+			close(out);
+			close(in);
+			close(kkSocket);
 		}
 	}
 
