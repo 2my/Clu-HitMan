@@ -1,11 +1,11 @@
 package no.antares.clutil.hitman;
 
-import static org.junit.Assert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.junit.Test;
+import org.junit.*;
 
 public class MessageChannelTest {
 	int sensibleWait	= 20;
@@ -23,7 +23,16 @@ public class MessageChannelTest {
 		}
 	};
 
-	@Test public void send() throws Exception {
+	@Before public void setUp() throws Exception {
+		done	= false;
+	}
+
+	@After public void tearDown() throws Exception {
+		done	= true;
+		// channelThread.interrupt();
+	}
+
+	@Test public void send_EXPIRY() throws Exception {
 		String msg	= MockDeadLine.messageExpiringIn( 1 ).message;
 		channelThread.start();
 		String response	= MessageChannel.send( port, msg );
@@ -31,9 +40,20 @@ public class MessageChannelTest {
 		assertThat( response, is( "" ) );
 		assertThat( received.size(), is( 1 ) );
 		assertThat( received.remove().message, is( msg ) );
+	}
 
-		msg	= Message.Semafor.PING.msgStart;
-		response	= MessageChannel.send( port, msg );
+	@Test public void send_no_server() throws Exception {
+		String msg	= MockDeadLine.messageExpiringIn( 1 ).message;
+		String response	= MessageChannel.send( port, msg );
+		Thread.sleep( sensibleWait );
+		assertThat( response, is( "" ) );
+		assertThat( received.size(), is( 0 ) );
+	}
+
+	@Test public void send_PING() throws Exception {
+		String msg	= Message.Semafor.PING.msgStart;
+		channelThread.start();
+		String response	= MessageChannel.send( port, msg );
 		Thread.sleep( sensibleWait );
 		assertThat( response, is( "PONG" ) );
 		assertThat( received.size(), is( 1 ) );
