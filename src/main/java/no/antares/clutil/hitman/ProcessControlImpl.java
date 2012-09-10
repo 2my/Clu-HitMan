@@ -15,6 +15,8 @@
 */
 package no.antares.clutil.hitman;
 
+import java.io.*;
+
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
 
@@ -26,6 +28,7 @@ public class ProcessControlImpl implements ProcessControl {
 
 	Process process	= null;
 	private final String execStr;
+	private ProcessOut procOut	= null;
 
 	/** Setup process to control with argument being a command-line string. */
 	public ProcessControlImpl( String execStr ) {
@@ -36,21 +39,27 @@ public class ProcessControlImpl implements ProcessControl {
 
 	/** @see no.antares.clutil.hitman.ProcessControl#start() */
 	@Override public void start() {
-		logger.info( "start() process started: " + (process != null) );
+		logger.info( "start() " + execStr );
 		if ( process != null )
 			return;
 		try {
+			// TODO: use ProcessBuilder, http://stackoverflow.com/questions/3468987/executing-another-application-from-java
 			process = Runtime.getRuntime().exec( execStr );
+			procOut	= new ProcessOut( process );
+			procOut.start();
 		} catch ( Throwable e ) {
 			logger.fatal( "start(): " + execStr, e );
 			throw new RuntimeException( "Error starting process: " + execStr, e);
 		}
+		logger.info( "start() process started: " + (process != null) );
 	}
 
 	/** @see no.antares.clutil.hitman.ProcessControl#kill() */
 	@Override public void kill() {
 		logger.warn( "kill()" );
 		try {
+			procOut.done();
+			procOut	= null;
 			if ( process != null )
 				process.destroy();
 		} catch ( Throwable e ) {
@@ -70,6 +79,42 @@ public class ProcessControlImpl implements ProcessControl {
 	@Override public void shutDownAll() {
 		kill();
 		System.exit( 0 );
+	}
+
+	private class ProcessOut extends Thread {
+		private boolean done	= false;
+		private final BufferedReader in, err;
+		ProcessOut( Process process2log ) {
+			super( "ProcessOut" );
+			this.in = new BufferedReader( new InputStreamReader( process2log.getInputStream() ) );
+			this.err = new BufferedReader( new InputStreamReader( process2log.getErrorStream() ) );
+		}
+		public void done() {
+			done	= true;
+		}
+		public void run() {
+			while ( ! done ) {
+				try {
+					if ( in.ready() ) {
+						String line	= in.readLine();
+						logger.info( "System.out:" + line );
+					}
+					if ( err.ready() ) {
+						String line	= err.readLine();
+						logger.info( "System.err:" + line );
+					}
+				} catch ( IOException ioe ) {
+				}
+			}
+			close( in );
+			close( err );
+		}
+	};
+	private void close( Reader r) {
+		try {
+			r.close();
+		} catch ( IOException ioe ) {
+		}
 	}
 
 }
