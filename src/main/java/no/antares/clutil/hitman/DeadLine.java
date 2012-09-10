@@ -20,10 +20,15 @@ package no.antares.clutil.hitman;
  * @author tommy skodje
 */
 abstract class DeadLine {
+	private final long defaultTimeOut;
 	// deadLine is mutable and all access should be synchronized
-	private static final long FAR_FUTURE	= Long.MAX_VALUE;
-	private long deadLine	= FAR_FUTURE;
+	private long deadLine;
 	private int[] deadLineMonitor	= {};
+
+	public DeadLine(long defaultTimeOut) {
+		this.defaultTimeOut = defaultTimeOut;
+		deadLine	= defaultTimeOut;
+	}
 
 	/** Implementor decides what to do when expired */
 	abstract void expired();
@@ -42,7 +47,7 @@ abstract class DeadLine {
     	synchronized ( deadLineMonitor ) {
             if ( System.currentTimeMillis() <= deadLine )
             	return;
-        	deadLine	= FAR_FUTURE;
+        	deadLine	= defaultTimeOut;
     	}
        	expired();
 	}

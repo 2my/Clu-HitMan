@@ -56,7 +56,7 @@ public class HitManTest {
 		when( channel.waitForNextMessage() ).thenReturn( MockDeadLine.messageExpiringIn( 100 ) );
 		Thread msgLoop	= new Thread( "HitMan" ) {
 			public void run() {
-				HitMan.runHitMan( channel, pc, hitManCheckPeriodMillis );
+				HitMan.runHitMan( channel, pc, hitManCheckPeriodMillis, Long.MAX_VALUE );
 			}
 		};
 		msgLoop.start();

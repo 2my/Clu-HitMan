@@ -32,11 +32,7 @@ public class HitMan {
 	private final ProcessControl process;
 	private final Timer restarter;
 
-	private final DeadLine restartAtExpiry	= new DeadLine() {
-		void expired() {
-			process.restart();
-		}
-	};
+	private final DeadLine restartAtExpiry;
 	private final TimerTask shutDownAll	= new TimerTask() {
 		public void run() {
 			process.shutDownAll();
@@ -59,13 +55,15 @@ public class HitMan {
 
 	/** Set up deadLine checker and start external process */
 	public static void runHitMan( int port, String command, int periodInSeconds ) {
-		runHitMan( MessageChannel.openInbound( port ), new ProcessControlImpl( command ), periodInSeconds * ticksPerSecond );
+		int periodInMillis	= periodInSeconds * ticksPerSecond;
+		int defaultTimeOutMillis	= 2 * periodInMillis;
+		runHitMan( MessageChannel.openInbound( port ), new ProcessControlImpl( command ), periodInMillis, defaultTimeOutMillis );
 	}
 
 	/** Set up deadLine checker and start external process */
-	public static void runHitMan( MessageChannel channel, ProcessControl pc, int periodInMillis ) {
+	public static void runHitMan( MessageChannel channel, ProcessControl pc, int periodInMillis, long defaultTimeOutMillis ) {
 		try {
-			HitMan hitMan	= new HitMan( pc, periodInMillis );
+			HitMan hitMan	= new HitMan( pc, periodInMillis, defaultTimeOutMillis );
 			hitMan.messageLoop( channel );
 		} finally {
 			channel.close();
@@ -73,7 +71,12 @@ public class HitMan {
 	}
 
 	/** Start external process and deadLine checker */
-	protected HitMan( ProcessControl processControl, int periodInMillis ) {
+	protected HitMan( ProcessControl processControl, int periodInMillis, long defaultTimeOutMillis ) {
+		restartAtExpiry	= new DeadLine( defaultTimeOutMillis ) {
+			void expired() {
+				process.restart();
+			}
+		};
 		restarter	= DeadLineChecker.periodical( restartAtExpiry, periodInMillis ).startInMillis( 2 * periodInMillis );
 		process	= processControl;
 		Runtime.getRuntime().addShutdownHook( shutDownProcess );

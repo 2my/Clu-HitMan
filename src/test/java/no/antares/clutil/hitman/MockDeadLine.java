@@ -16,6 +16,10 @@
 package no.antares.clutil.hitman;
 
 public class MockDeadLine extends DeadLine {
+	public MockDeadLine( long initialTimeOut ) {
+		super( initialTimeOut );
+	}
+
 	boolean expiredCalled	= false;
 	int checkCalls	= 0;
 

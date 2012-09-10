@@ -21,7 +21,7 @@ import static org.hamcrest.Matchers.*;
 import org.junit.Test;
 
 public class DeadLineCheckerTest {
-	MockDeadLine deadLine	= new MockDeadLine();
+	MockDeadLine deadLine	= new MockDeadLine( Long.MAX_VALUE );
 
 	@Test public void oneOff() throws Exception {
 		deadLine.reset();
@@ -30,7 +30,7 @@ public class DeadLineCheckerTest {
 		assertThat( deadLine.checkCalls, is( 0 ) );
 
 		sut.startInMillis( 1 );
-		Thread.sleep( 3 );
+		Thread.sleep( 10 );
 		assertThat( deadLine.checkCalls, is( 1 ) );
 	}
 
@@ -41,7 +41,7 @@ public class DeadLineCheckerTest {
 		assertThat( deadLine.checkCalls, is( 0 ) );
 
 		sut.startInMillis( 1 );
-		Thread.sleep( 3 );
+		Thread.sleep( 10 );
 		assertThat( deadLine.checkCalls, greaterThan( 1 ) );
 	}
 

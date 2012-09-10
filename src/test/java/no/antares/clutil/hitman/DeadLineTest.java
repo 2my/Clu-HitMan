@@ -21,9 +21,10 @@ import static org.hamcrest.Matchers.*;
 import org.junit.Test;
 
 public class DeadLineTest {
-	MockDeadLine sut	= new MockDeadLine();
 
 	@Test public void test() {
+		MockDeadLine sut	= new MockDeadLine( Long.MAX_VALUE );
+
 		// initially infinite deadline
 		sut.reset();
 		sut.check();
