@@ -58,8 +58,10 @@ public class ProcessControlImpl implements ProcessControl {
 	@Override public void kill() {
 		logger.warn( "kill()" );
 		try {
-			procOut.done();
-			procOut	= null;
+			if ( procOut != null ) {
+				procOut.done();
+				procOut	= null;
+			}
 			if ( process != null )
 				process.destroy();
 		} catch ( Throwable e ) {
