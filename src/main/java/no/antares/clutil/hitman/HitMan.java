@@ -42,7 +42,7 @@ public class HitMan {
 			process.shutDownAll();
 		}
 	};
-	private final Thread shutDownProcess	= new Thread() {
+	private final Thread shutDownProcess	= new Thread( "shutDownProcess" ) {
 		public void run() {
 			process.kill();
 	    }
@@ -74,10 +74,10 @@ public class HitMan {
 
 	/** Start external process and deadLine checker */
 	protected HitMan( ProcessControl processControl, int periodInMillis ) {
+		restarter	= DeadLineChecker.periodical( restartAtExpiry, periodInMillis ).startInMillis( 2 * periodInMillis );
 		process	= processControl;
 		Runtime.getRuntime().addShutdownHook( shutDownProcess );
 		process.start();
-		restarter	= DeadLineChecker.periodical( restartAtExpiry, periodInMillis ).startInMillis( 2 * periodInMillis );
 	}
 
 	/** Process messages on channel  */
@@ -90,7 +90,7 @@ public class HitMan {
 				restartAtExpiry.extend( message );
 			if ( message.isTermination() ) {
 				int extraWait	= 100;
-				( new Timer() ).schedule( shutDownAll, message.waitMillis() + extraWait );
+				( new Timer( "shutDownAll" ) ).schedule( shutDownAll, message.waitMillis() + extraWait );
 				restarter.cancel();
 				return;
 			}
