@@ -49,8 +49,8 @@ public class HitManTest {
 
 	private static int hitManCheckPeriodMillis	= 1;
 	private static int hitManRampUp	= 20;	// takes some time to get going
-	private static int severalHitManPeriods	= 10;	// so that hitMan checks deadLine more than once
-	private static int hitManExtraWaitAndThenSome	= 120;
+	private static int severalHitManPeriods	= 20;	// so that hitMan checks deadLine more than once
+	private static int hitManExtraWaitAndThenSome	= 150;
 
 	@Test public void test() throws Exception {
 		when( channel.waitForNextMessage() ).thenReturn( MockDeadLine.messageExpiringIn( 100 ) );
