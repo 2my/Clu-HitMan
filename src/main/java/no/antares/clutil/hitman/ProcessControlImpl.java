@@ -17,6 +17,7 @@ package no.antares.clutil.hitman;
 
 import java.io.*;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
 
@@ -99,12 +100,15 @@ public class ProcessControlImpl implements ProcessControl {
 				try {
 					if ( in.ready() ) {
 						String line	= in.readLine();
-						logger.info( "System.out:" + line );
+						if ( ! StringUtils.isBlank( line ) )
+							logger.info( "System.out:" + line );
 					}
 					if ( err.ready() ) {
 						String line	= err.readLine();
-						logger.info( "System.err:" + line );
+						if ( ! StringUtils.isBlank( line ) )
+							logger.info( "System.err:" + line );
 					}
+					waitHalfASecond();
 				} catch ( IOException ioe ) {
 				}
 			}
@@ -112,6 +116,13 @@ public class ProcessControlImpl implements ProcessControl {
 			close( err );
 		}
 	};
+
+	private static void waitHalfASecond() {
+		try {
+			Thread.sleep( 500 );
+		} catch ( Throwable t ) {
+		}
+	}
 	private void close( Reader r) {
 		try {
 			r.close();
