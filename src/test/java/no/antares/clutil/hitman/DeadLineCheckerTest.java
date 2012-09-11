@@ -30,7 +30,7 @@ public class DeadLineCheckerTest {
 		assertThat( deadLine.checkCalls, is( 0 ) );
 
 		sut.startInMillis( 1 );
-		Thread.sleep( 10 );
+		Thread.sleep( 40 );
 		assertThat( deadLine.checkCalls, is( 1 ) );
 	}
 
@@ -41,7 +41,7 @@ public class DeadLineCheckerTest {
 		assertThat( deadLine.checkCalls, is( 0 ) );
 
 		sut.startInMillis( 1 );
-		Thread.sleep( 10 );
+		Thread.sleep( 40 );
 		assertThat( deadLine.checkCalls, greaterThan( 1 ) );
 	}
 

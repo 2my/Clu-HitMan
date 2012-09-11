@@ -25,7 +25,7 @@ import org.junit.*;
 public class MessageChannelTest {
 	int sensibleWait	= 20;
 
-	int port	= 3333;
+	int port	= 9999;
 	ConcurrentLinkedQueue<Message> received	= new ConcurrentLinkedQueue<Message>();
 
 	boolean done	= false;
