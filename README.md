@@ -4,7 +4,7 @@ Clu-HitMan
 HitMan is a command-line utility that can start and kill other processes
 
 Maven builds a self-contained jar. Run it without options for help:
-```java -jar "clu.hitman-0.5-jar-with-dependencies.jar"```
+```java -jar "clu.hitman-*-jar-with-dependencies.jar"```
 
 The  utility has 3 functions based on command line arguments
  * ( port+cmd ): start hitMan (on port), hitMan wiil start process specified by cmd option
