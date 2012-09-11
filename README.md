@@ -15,8 +15,8 @@ See also Main class in package no.antares.clutil.hitman
 
 Examples:
 ```
-(DOS) java -jar "clu.hitman-0.5-jar-with-dependencies.jar" -port 5555 -cmd "C:\Program Files\Internet Explorer\iexplore.exe" 
-(OSX) java -jar "clu.hitman-0.5-jar-with-dependencies.jar" -port 5555 -cmd /Applications/TextWrangler.app/Contents/MacOS/TextWrangler 
-java -jar "clu.hitman-0.5-jar-with-dependencies.jar" -port 5555 -msg "HIT ME IN 5" 
+(DOS) java -jar "clu.hitman-*-jar-with-dependencies.jar" -port 5555 -cmd "C:\Program Files\Internet Explorer\iexplore.exe" 
+(OSX) java -jar "clu.hitman-*-jar-with-dependencies.jar" -port 5555 -cmd /Applications/TextWrangler.app/Contents/MacOS/TextWrangler 
+java -jar "clu.hitman-*-jar-with-dependencies.jar" -port 5555 -msg "HIT ME IN 5" 
 ```
 
