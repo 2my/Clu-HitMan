@@ -46,11 +46,7 @@ public class HitMan {
 
 	/** If HitMan is listening on port, should return status and command. */
 	public static String ping( int port ) {
-		try {
-			return MessageChannel.send( port, Message.Semafor.PING.msgStart );
-		} catch ( Throwable t ) {
-			return null;
-		}
+		return MessageChannel.send( port, Message.Semafor.PING.msgStart );
 	}
 
 	/** Set up deadLine checker and start external process */
