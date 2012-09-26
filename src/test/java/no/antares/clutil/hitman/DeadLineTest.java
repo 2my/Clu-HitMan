@@ -31,12 +31,13 @@ public class DeadLineTest {
 		assertThat( sut.expiredCalled , is( false ) );
 
 		// set expired
+		sut	= new MockDeadLine( 100 );
 		sut.reset();
 		sut.extend( MockDeadLine.messageExpiringIn( -1 ) );
 		sut.check();
 		assertThat( sut.expiredCalled , is( true ) );
 
-		// was expiry reset?
+		// was expiry reset (ref 100 ms default above)?
 		sut.reset();
 		sut.check();
 		assertThat( sut.expiredCalled , is( false ) );
@@ -47,6 +48,16 @@ public class DeadLineTest {
 		sut.extend( MockDeadLine.messageExpiringIn( 1 ) );
 		sut.check();
 		assertThat( sut.expiredCalled , is( false ) );
+
+		// see that default employed (should timeout immediately after first timeout)
+		sut	= new MockDeadLine( -1 );
+		sut.reset();
+		sut.extend( MockDeadLine.messageExpiringIn( -1 ) );
+		sut.check();
+		assertThat( sut.expiredCalled , is( true ) );
+		sut.reset();
+		sut.check();
+		assertThat( sut.expiredCalled , is( true ) );
 	}
 
 

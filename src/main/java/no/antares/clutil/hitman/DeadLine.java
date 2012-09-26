@@ -47,7 +47,9 @@ abstract class DeadLine {
     	synchronized ( deadLineMonitor ) {
             if ( System.currentTimeMillis() <= deadLine )
             	return;
-        	deadLine	= defaultTimeOut;
+        	deadLine	= System.currentTimeMillis() + defaultTimeOut;
+        	if ( deadLine < 0 )	// overflow
+        		deadLine	= Long.MAX_VALUE;
     	}
        	expired();
 	}
