@@ -53,7 +53,7 @@ public class HitMan {
 	public static void runHitMan( int port, String command, int periodInSeconds ) {
 		int periodInMillis	= periodInSeconds * ticksPerSecond;
 		int defaultTimeOutMillis	= 2 * periodInMillis;
-		runHitMan( MessageChannel.openInbound( port ), new ProcessControlImpl( command ), periodInMillis, defaultTimeOutMillis );
+		runHitMan( MessageChannel.openInbound( port ), new ProcessControlRuntime( command ), periodInMillis, defaultTimeOutMillis );
 	}
 
 	/** Set up deadLine checker and start external process */
