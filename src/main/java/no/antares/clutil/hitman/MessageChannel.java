@@ -16,8 +16,7 @@
 package no.antares.clutil.hitman;
 
 import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -30,12 +29,12 @@ public class MessageChannel implements Closeable {
 	private final ServerSocket serverSocket;
 
 	/** Send message to HitMan */
-	public static String send( int port, String message ) throws IOException {
+	public static String send( int port, String message ) {
 		return send( "localhost", port, message );
 	}
 
 	/** Send message to HitMan, @return response */
-	public static String send(String host, int port, String message) throws IOException {
+	public static String send(String host, int port, String message) {
 		Socket kkSocket = null;
 		PrintWriter out = null;
 		BufferedReader in = null;
@@ -55,9 +54,13 @@ public class MessageChannel implements Closeable {
 				reply.append(fromServer);
 			}
 			return reply.toString();
+		} catch (ConnectException e) {
+			logger.error( "send(" + message + ") could not get connection to: " + host + port );
+			return "ERROR connecting to " + host + port;
 		} catch (IOException e) {
-			logger.error("send() couldn not get I/O for the connection to: " + host + port, e);
-			throw e;
+			String msg	= "ERROR sending " + message + " to " + host + ":" + port;
+			logger.error( msg, e);
+			return msg;
 		} finally {
 			close(out);
 			close(in);
