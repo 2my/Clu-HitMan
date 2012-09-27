@@ -15,10 +15,8 @@
 */
 package no.antares.clutil.hitman;
 
-import java.io.IOException;
 import java.net.ConnectException;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 
@@ -53,7 +51,7 @@ public class HitMan {
 			return MessageChannel.send( port, message );
 		} catch (ConnectException e) {
 			return "ERROR connecting to localhost " + port;
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			return "ERROR sending " + message + " to localhost:" + port;
 		}
 	}
