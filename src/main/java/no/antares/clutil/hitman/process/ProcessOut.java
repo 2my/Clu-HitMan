@@ -1,4 +1,4 @@
-package no.antares.clutil.hitman;
+package no.antares.clutil.hitman.process;
 
 import java.io.*;
 

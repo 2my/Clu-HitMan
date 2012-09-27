@@ -13,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package no.antares.clutil.hitman;
+package no.antares.clutil.hitman.process;
 
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
@@ -35,7 +35,7 @@ public class ProcessControlRuntime implements ProcessControl {
 		this.execStr = execStr;
 	}
 
-	/** @see no.antares.clutil.hitman.ProcessControl#start() */
+	/** @see no.antares.clutil.hitman.process.ProcessControl#start() */
 	@Override public void start() {
 		logger.info( "start() " + execStr );
 		if ( process != null )
@@ -52,7 +52,7 @@ public class ProcessControlRuntime implements ProcessControl {
 		logger.info( "start() process started: " + (process != null) );
 	}
 
-	/** @see no.antares.clutil.hitman.ProcessControl#kill() */
+	/** @see no.antares.clutil.hitman.process.ProcessControl#kill() */
 	@Override public void kill() {
 		logger.warn( "kill()" );
 		try {
@@ -69,13 +69,13 @@ public class ProcessControlRuntime implements ProcessControl {
     	process	= null;
     }
 
-	/** @see no.antares.clutil.hitman.ProcessControl#restart() */
+	/** @see no.antares.clutil.hitman.process.ProcessControl#restart() */
 	@Override public void restart() {
 		kill();
 		start();
 	}
 
-	/** @see no.antares.clutil.hitman.ProcessControl#shutDownAll() */
+	/** @see no.antares.clutil.hitman.process.ProcessControl#shutDownAll() */
 	@Override public void shutDownAll() {
 		kill();
 		System.exit( 0 );

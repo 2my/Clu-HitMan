@@ -13,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package no.antares.clutil.hitman;
+package no.antares.clutil.hitman.process;
 
 import java.io.File;
 import java.util.List;
@@ -53,7 +53,7 @@ public class ProcessControlProcessBuilder implements ProcessControl {
 		fullCall	= StringUtils.join( programAndArguments, " " );
 	}
 
-	/** @see no.antares.clutil.hitman.ProcessControl#start() */
+	/** @see no.antares.clutil.hitman.process.ProcessControl#start() */
 	@Override public void start() {
 		logger.info( "start() " + fullCall );
 		if ( process != null )
@@ -72,7 +72,7 @@ public class ProcessControlProcessBuilder implements ProcessControl {
 		logger.info( "start() process started: " + (process != null) );
 	}
 
-	/** @see no.antares.clutil.hitman.ProcessControl#kill() */
+	/** @see no.antares.clutil.hitman.process.ProcessControl#kill() */
 	@Override public void kill() {
 		logger.warn( "kill()" );
 		try {
@@ -89,13 +89,13 @@ public class ProcessControlProcessBuilder implements ProcessControl {
     	process	= null;
     }
 
-	/** @see no.antares.clutil.hitman.ProcessControl#restart() */
+	/** @see no.antares.clutil.hitman.process.ProcessControl#restart() */
 	@Override public void restart() {
 		kill();
 		start();
 	}
 
-	/** @see no.antares.clutil.hitman.ProcessControl#shutDownAll() */
+	/** @see no.antares.clutil.hitman.process.ProcessControl#shutDownAll() */
 	@Override public void shutDownAll() {
 		kill();
 		System.exit( 0 );
