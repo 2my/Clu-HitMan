@@ -39,8 +39,8 @@ public class Main {
 			if ( ! StringUtils.isBlank( options.command ) ) {
 				HitMan.runHitMan( options.portNo, options.command, 5 );
 			}
-			if ( ! StringUtils.isBlank( options.message ) ) {
-				MessageChannel.send( options.portNo, options.message );
+			if ( ! StringUtils.isBlank( options.signal ) ) {
+				MessageChannel.send( options.portNo, options.signal );
 			}
 		} else {
 			options.printHelp( "java -jar HitMan.jar" );

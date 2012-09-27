@@ -22,16 +22,16 @@ import org.apache.commons.cli.*;
 */
 class CommandLineOptions {
 	final Integer portNo;
-	final String message;
+	final String signal;
 	final String command;
 
 	private final Options options = new Options();
 
 	protected CommandLineOptions( String[] args ) {
-		Option help = addOption( "help", "print this message" );
+		addOption( "help", "print this message" );
 		Option portArg = addOption( "port", "port to bind to", "port" );
-		Option commandArg = addOption( "cmd", "command (process) to run", "command" );
-		Option messageArg = addOption( "msg", "message to send", "message" );
+		Option signalArg = addOption( "cmd", "command (process) to run", "command" );
+		Option messageArg = addOption( "sig", "signal to send", "signal" );
 
 		CommandLineParser parser = new GnuParser();
 		CommandLine cmd;
@@ -46,8 +46,8 @@ class CommandLineOptions {
 			portNo	= null;
 		else
 			portNo = Integer.valueOf( port );
-		message = cmd.getOptionValue( messageArg.getOpt(), null );
-		command = cmd.getOptionValue( commandArg.getOpt(), null );
+		signal = cmd.getOptionValue( messageArg.getOpt(), null );
+		command = cmd.getOptionValue( signalArg.getOpt(), null );
 	}
 
 	protected void printHelp( String startCommand ) {
@@ -56,7 +56,7 @@ class CommandLineOptions {
 	}
 
 	@Override public String toString() {
-		return "CommandLineOptions [portNo=" + portNo + ", signal=" + message + ", command=" + command + "]";
+		return "CommandLineOptions [portNo=" + portNo + ", signal=" + signal + ", command=" + command + "]";
 	}
 
 	private Option addOption( String opt, String description ) {
