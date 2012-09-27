@@ -15,7 +15,8 @@
 */
 package no.antares.clutil.hitman;
 
-import java.io.*;
+import java.io.File;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
@@ -34,7 +35,7 @@ public class ProcessControlProcessBuilder implements ProcessControl {
 	private final String fullCall;
 
 	/** Setup process to control with arguments and working directory. */
-	public ProcessControlProcessBuilder( File workingDirIn, String program, String... argumentsIn ) {
+	public ProcessControlProcessBuilder( File workingDirIn, String program, List<String> argumentsIn ) {
 		logger.trace( "ProcessControlImpl() " + program );
 		Validate.notNull( program, "ProcessControlImpl( null )" );
 
@@ -43,7 +44,7 @@ public class ProcessControlProcessBuilder implements ProcessControl {
 		if ( argumentsIn == null )
 			programAndArguments	= new String[ 1 ];
 		else {
-			programAndArguments	= new String[ argumentsIn.length + 1 ];
+			programAndArguments	= new String[ argumentsIn.size() + 1 ];
 			int idx	= 1;
 			for ( String argument: argumentsIn )
 				programAndArguments[ idx++ ]	= argument;
