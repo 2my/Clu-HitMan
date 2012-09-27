@@ -18,6 +18,9 @@ package no.antares.clutil.hitman;
 import java.net.ConnectException;
 import java.util.*;
 
+import no.antares.clutil.hitman.process.ProcessControl;
+import no.antares.clutil.hitman.process.ProcessControlRuntime;
+
 import org.apache.log4j.Logger;
 
 
