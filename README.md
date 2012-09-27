@@ -8,7 +8,7 @@ Maven builds a self-contained jar. Run it without options for help:
 
 The  utility has 3 functions based on command line arguments
  * ( port+cmd ): start hitMan (on port), hitMan wiil start process specified by cmd option
- * ( port+message ): send message to hitMan (on port)
+ * ( port+sig ): send signal to hitMan (on port)
  * ( no port ): print help / usage
 
 See also Main class in package no.antares.clutil.hitman
