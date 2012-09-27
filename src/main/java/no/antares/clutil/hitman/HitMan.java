@@ -15,6 +15,8 @@
 */
 package no.antares.clutil.hitman;
 
+import java.io.IOException;
+import java.net.ConnectException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -46,7 +48,14 @@ public class HitMan {
 
 	/** If HitMan is listening on port, should return status and command. */
 	public static String ping( int port ) {
-		return MessageChannel.send( port, Message.Semafor.PING.msgStart );
+		String message	= Message.Semafor.PING.msgStart;
+		try {
+			return MessageChannel.send( port, message );
+		} catch (ConnectException e) {
+			return "ERROR connecting to localhost " + port;
+		} catch (Exception e) {
+			return "ERROR sending " + message + " to localhost:" + port;
+		}
 	}
 
 	/** Set up deadLine checker and start external process */

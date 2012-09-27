@@ -29,12 +29,12 @@ public class MessageChannel implements Closeable {
 	private final ServerSocket serverSocket;
 
 	/** Send message to HitMan */
-	public static String send( int port, String message ) {
+	public static String send( int port, String message ) throws IOException {
 		return send( "localhost", port, message );
 	}
 
 	/** Send message to HitMan, @return response */
-	public static String send(String host, int port, String message) {
+	public static String send(String host, int port, String message) throws IOException {
 		Socket kkSocket = null;
 		PrintWriter out = null;
 		BufferedReader in = null;
@@ -56,11 +56,11 @@ public class MessageChannel implements Closeable {
 			return reply.toString();
 		} catch (ConnectException e) {
 			logger.error( "send(" + message + ") could not get connection to: " + host + port );
-			return "ERROR connecting to " + host + port;
+			throw e;
 		} catch (IOException e) {
 			String msg	= "ERROR sending " + message + " to " + host + ":" + port;
 			logger.error( msg, e);
-			return msg;
+			throw e;
 		} finally {
 			close(out);
 			close(in);
@@ -69,7 +69,7 @@ public class MessageChannel implements Closeable {
 	}
 
 	/** Open a channel - close when done */
-	protected static MessageChannel openInbound( int port ) {
+	public static MessageChannel openInbound( int port ) {
 		try {
 			return new MessageChannel( new ServerSocket( port ) );
 		} catch (IOException e) {
