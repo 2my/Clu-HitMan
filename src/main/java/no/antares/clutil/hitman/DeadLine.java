@@ -27,7 +27,9 @@ abstract class DeadLine {
 
 	public DeadLine(long defaultTimeOut) {
 		this.defaultTimeOut = defaultTimeOut;
-		deadLine	= defaultTimeOut;
+		deadLine	= System.currentTimeMillis() + defaultTimeOut;
+    	if ( deadLine < 0 )	// overflow
+    		deadLine	= Long.MAX_VALUE;
 	}
 
 	/** Implementor decides what to do when expired */
