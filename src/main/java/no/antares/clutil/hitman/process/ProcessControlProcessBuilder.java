@@ -22,7 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
 
-/** Start and kill an external process.
+/** Start and kill an external process given by working directory, program and argument list.
  * @author tommy skodje
  */
 public class ProcessControlProcessBuilder implements ProcessControl {
