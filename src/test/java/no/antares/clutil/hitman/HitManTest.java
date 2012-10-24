@@ -54,7 +54,6 @@ public class HitManTest {
 	};
 
 	private static int hitManCheckPeriodMillis	= 1;
-	private static int severalHitManPeriods	= 20;	// so that hitMan checks deadLine more than once
 
 	@Test public void test() throws Exception {
 		when( channel.waitForNextMessage() ).thenReturn( MockDeadLine.messageExpiringIn( 100 ) );
@@ -90,6 +89,7 @@ public class HitManTest {
 
 	Answer<Message> waitBetween( final Message msg1, final Message msg2 ) {
 		return new Answer<Message>() {
+			final int severalHitManPeriods	= 20 * hitManCheckPeriodMillis;	// so that hitMan checks deadLine more than once
 			int calls	= 0;
 			@Override public Message answer(InvocationOnMock invocation) throws Throwable {
 				calls++;
