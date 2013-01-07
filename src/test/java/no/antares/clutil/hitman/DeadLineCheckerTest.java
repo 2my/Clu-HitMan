@@ -15,8 +15,10 @@
 */
 package no.antares.clutil.hitman;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.Matchers.*;
+import static org.doxla.eventualj.Eventually.eventually;
+import static org.doxla.eventualj.EventuallyMatchers.willBe;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
@@ -26,23 +28,19 @@ public class DeadLineCheckerTest {
 	@Test public void oneOff() throws Exception {
 		deadLine.reset();
 		DeadLineChecker sut	= DeadLineChecker.oneOff( deadLine );
-		Thread.sleep( 2 );
-		assertThat( deadLine.checkCalls, is( 0 ) );
+		assertThat( eventually( deadLine ).checkCalls(), willBe( 0 ) );
 
 		sut.startInMillis( 1 );
-		Thread.sleep( 40 );
-		assertThat( deadLine.checkCalls, is( 1 ) );
+		assertThat( eventually( deadLine ).checkCalls(), willBe( 1 ) );
 	}
 
 	@Test public void periodical() throws Exception {
 		deadLine.reset();
 		DeadLineChecker sut	= DeadLineChecker.periodical( deadLine, 1 );
-		Thread.sleep( 2 );
-		assertThat( deadLine.checkCalls, is( 0 ) );
+		assertThat( eventually( deadLine ).checkCalls(), willBe( 0 ) );
 
 		sut.startInMillis( 1 );
-		Thread.sleep( 40 );
-		assertThat( deadLine.checkCalls, greaterThan( 1 ) );
+		assertThat( eventually( deadLine ).checkCalls(), willBe( greaterThan( 1 ) ) );
 	}
 
 }

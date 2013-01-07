@@ -15,11 +15,11 @@
 */
 package no.antares.clutil.hitman;
 
-import static org.hamcrest.Matchers.is;
+import static org.doxla.eventualj.Eventually.eventually;
+import static org.doxla.eventualj.EventuallyMatchers.willBe;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import no.antares.clutil.hitman.process.ProcessControl;
 
 import org.junit.Test;
@@ -33,7 +33,11 @@ public class HitManTest {
 	int nStarts	= 0;
 	int nKills	= 0;
 	int nTerminations	= 0;
+	public int getNumStarts() { return nStarts; }
+	public int getNumKills() { return nKills; }
+	public int getNumTerminations() { return nTerminations; }
 	ProcessControl pc	= new ProcessControl() {
+
 		@Override public void start() {
 			nStarts++;
 		}
@@ -50,9 +54,6 @@ public class HitManTest {
 	};
 
 	private static int hitManCheckPeriodMillis	= 1;
-	private static int hitManRampUp	= 20;	// takes some time to get going
-	private static int severalHitManPeriods	= 20;	// so that hitMan checks deadLine more than once
-	private static int hitManExtraWaitAndThenSome	= 150;
 
 	@Test public void test() throws Exception {
 		when( channel.waitForNextMessage() ).thenReturn( MockDeadLine.messageExpiringIn( 100 ) );
@@ -62,25 +63,18 @@ public class HitManTest {
 			}
 		};
 		msgLoop.start();
-		Thread.sleep( hitManRampUp );
-		assertThat( nStarts, is( 1 ) );
-		assertThat( nKills, is( 0 ) );
+		assertThat( eventually( this ).getNumStarts(), willBe( 1 ) );
+		assertThat( eventually( this ).getNumKills(), willBe( 0 ) );
 
 		when( channel.waitForNextMessage() ).thenAnswer( expireWaitNoExpire );
-		makeSureHitManCouldCheck();
-		assertThat( nStarts, is( 2 ) );
-		assertThat( nKills, is( 1 ) );
-		assertThat( nTerminations, is( 0 ) );
+		assertThat( eventually( this ).getNumStarts(), willBe( 2 ) );
+		assertThat( eventually( this ).getNumKills(), willBe( 1 ) );
+		assertThat( eventually( this ).getNumTerminations(), willBe( 0 ) );
 
 		when( channel.waitForNextMessage() ).thenAnswer( terminateWaitNoExpire );
-		Thread.sleep( hitManExtraWaitAndThenSome ); 
-		assertThat( nStarts, is( 2 ) );
-		assertThat( nKills, is( 1 ) );
-		assertThat( nTerminations, is( 1 ) );
-	}
-
-	private void makeSureHitManCouldCheck() throws InterruptedException {
-		Thread.sleep( severalHitManPeriods + 2 );
+		assertThat( eventually( this ).getNumStarts(), willBe( 2 ) );
+		assertThat( eventually( this ).getNumKills(), willBe( 1 ) );
+		assertThat( eventually( this ).getNumTerminations(), willBe( 1 ) );
 	}
 
 	Answer<Message> expireWaitNoExpire	= waitBetween(
@@ -95,6 +89,7 @@ public class HitManTest {
 
 	Answer<Message> waitBetween( final Message msg1, final Message msg2 ) {
 		return new Answer<Message>() {
+			final int severalHitManPeriods	= 20 * hitManCheckPeriodMillis;	// so that hitMan checks deadLine more than once
 			int calls	= 0;
 			@Override public Message answer(InvocationOnMock invocation) throws Throwable {
 				calls++;

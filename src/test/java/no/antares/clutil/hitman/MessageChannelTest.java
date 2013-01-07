@@ -15,12 +15,16 @@
 */
 package no.antares.clutil.hitman;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.doxla.eventualj.Eventually.eventually;
+import static org.doxla.eventualj.EventuallyMatchers.willBe;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public class MessageChannelTest {
 	int sensibleWait	= 20;
@@ -51,28 +55,31 @@ public class MessageChannelTest {
 		String msg	= MockDeadLine.messageExpiringIn( 1 ).message;
 		channelThread.start();
 		String response	= MessageChannel.send( port, msg );
-		Thread.sleep( sensibleWait );
 		assertThat( response, is( "" ) );
-		assertThat( received.size(), is( 1 ) );
-		assertThat( received.remove().message, is( msg ) );
+		assertThat( eventually( received ).size(), willBe( 1 ) );
+		assertThat( eventually( this ).getMsg(), willBe( msg ) );
 	}
 
 	@Test public void send_no_server() throws Exception {
 		String msg	= MockDeadLine.messageExpiringIn( 1 ).message;
 		String response	= MessageChannel.send( port, msg );
-		Thread.sleep( sensibleWait );
 		assertThat( response, is( "" ) );
-		assertThat( received.size(), is( 0 ) );
+		assertThat( eventually( received ).size(), willBe( 0 ) );
 	}
 
 	@Test public void send_PING() throws Exception {
 		String msg	= Message.Semafor.PING.msgStart;
 		channelThread.start();
 		String response	= MessageChannel.send( port, msg );
-		Thread.sleep( sensibleWait );
 		assertThat( response, is( "PONG" ) );
-		assertThat( received.size(), is( 1 ) );
-		assertThat( received.remove().message, is( msg ) );
+		assertThat( eventually( received ).size(), willBe( 1 ) );
+		assertThat( eventually( this ).getMsg(), willBe( msg ) );
+	}
+	public String getMsg() {
+		Message msg	= received.remove();
+		if ( msg != null )
+			return msg.message;
+		return null;
 	}
 
 }

@@ -30,6 +30,9 @@ public class MockDeadLine extends DeadLine {
 		return new Message( Message.Semafor.TERMINATE.inSeconds( nSeconds ) );
 	}
 
+	public int checkCalls() {
+		return checkCalls;
+	}
 	void reset() {
 		expiredCalled	= false;
 		checkCalls	= 0;

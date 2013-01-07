@@ -18,8 +18,9 @@ package no.antares.clutil.hitman.process;
 import org.apache.commons.lang.Validate;
 import org.apache.log4j.Logger;
 
-/** Start and kill an external process.
+/** Start and kill an external process given by full command-line.
  * @author tommy skodje
+ * @deprecated prefer to use ProcessControlProcessBuilder
  */
 public class ProcessControlRuntime implements ProcessControl {
 	private static final Logger logger	= Logger.getLogger( ProcessControlRuntime.class.getName() );

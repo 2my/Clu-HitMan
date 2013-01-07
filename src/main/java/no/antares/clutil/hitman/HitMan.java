@@ -16,7 +16,8 @@
 package no.antares.clutil.hitman;
 
 import java.net.ConnectException;
-import java.util.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import no.antares.clutil.hitman.process.ProcessControl;
 import no.antares.clutil.hitman.process.ProcessControlRuntime;
@@ -28,6 +29,7 @@ import org.apache.log4j.Logger;
  * terminates process after deadline (that may be extended).
  * @author tommy skodje
  */
+@SuppressWarnings("deprecation")
 public class HitMan {
 	private static final int ticksPerSecond	= 1000;
 	private static final Logger logger	= Logger.getLogger( HitMan.class.getName() );
@@ -44,7 +46,7 @@ public class HitMan {
 	private final Thread shutDownProcess	= new Thread( "shutDownProcess" ) {
 		public void run() {
 			process.kill();
-	    }
+	  }
 	};
 
 	/** If HitMan is listening on port, should return status and command. */
@@ -59,14 +61,14 @@ public class HitMan {
 		}
 	}
 
-	/** Set up deadLine checker and start external process */
+	/** Set up deadLine checker and start external process - rather naive implementation, prefer method runHitMan with ProcessControlProcessBuilder. */
 	public static void runHitMan( int port, String command, int periodInSeconds ) {
 		int periodInMillis	= periodInSeconds * ticksPerSecond;
 		int defaultTimeOutMillis	= 2 * periodInMillis;
 		runHitMan( MessageChannel.openInbound( port ), new ProcessControlRuntime( command ), periodInMillis, defaultTimeOutMillis );
 	}
 
-	/** Set up deadLine checker and start external process */
+	/** Set up deadLine checker and start external process, preferred method */
 	public static void runHitMan( MessageChannel channel, ProcessControl pc, int periodInMillis, long defaultTimeOutMillis ) {
 		try {
 			HitMan hitMan	= new HitMan( pc, periodInMillis, defaultTimeOutMillis );
