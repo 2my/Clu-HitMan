@@ -55,11 +55,10 @@ public class MessageChannel implements Closeable {
 			}
 			return reply.toString();
 		} catch (ConnectException e) {
-			logger.error( "send(" + message + ") could not get connection to: " + host + port );
+			logger.warn( "send(" + message + ") could not connect to: " + host + ":" + port );
 			throw e;
 		} catch (IOException e) {
-			String msg	= "ERROR sending " + message + " to " + host + ":" + port;
-			logger.error( msg, e);
+			logger.warn( "send(" + message + ") could not send to: " + host + ":" + port );
 			throw e;
 		} finally {
 			close(out);

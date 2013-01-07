@@ -56,37 +56,42 @@ public class ProcessControlProcessBuilder implements ProcessControl {
 	/** @see no.antares.clutil.hitman.process.ProcessControl#start() */
 	@Override public void start() {
 		logger.info( "start() " + fullCall );
-		if ( process != null )
-			return;
-		try {
-			ProcessBuilder builder = new ProcessBuilder( programAndArguments );
-			if ( this.workingDir != null )
-				builder.directory( this.workingDir );
-			process = builder.start();
-			procOut	= new ProcessOut( process );
-			procOut.start();
-		} catch ( Throwable e ) {
-			logger.fatal( "start(): " + fullCall, e );
-			throw new RuntimeException( "Error starting process: " + fullCall, e);
+		synchronized( this ) {
+			if ( process != null )
+				return;
+			try {
+				ProcessBuilder builder = new ProcessBuilder( programAndArguments );
+				if ( this.workingDir != null )
+					builder.directory( this.workingDir );
+				process = builder.start();
+				procOut	= new ProcessOut( process );
+				procOut.start();
+			} catch ( Throwable e ) {
+				logger.fatal( "start(): " + fullCall, e );
+				throw new RuntimeException( "Error starting process: " + fullCall, e);
+			}
 		}
 		logger.info( "start() process started: " + (process != null) );
 	}
 
 	/** @see no.antares.clutil.hitman.process.ProcessControl#kill() */
 	@Override public void kill() {
-		logger.warn( "kill()" );
-		try {
-			if ( procOut != null ) {
-				procOut.done();
-				procOut	= null;
-			}
-			if ( process != null )
+		logger.warn( "kill() process:" + process );
+		synchronized( this ) {
+			if ( process == null )
+				return;
+			try {
+				if ( procOut != null ) {
+					procOut.done();
+					procOut	= null;
+				}
 				process.destroy();
-		} catch ( Throwable e ) {
-			logger.fatal( "kill(): " + fullCall, e );
-			throw new RuntimeException( "Error killing process: " + fullCall, e);
+			} catch ( Throwable e ) {
+				logger.fatal( "kill(): " + fullCall, e );
+				throw new RuntimeException( "Error killing process: " + fullCall, e);
+			}
+	    	process	= null;
 		}
-    	process	= null;
     }
 
 	/** @see no.antares.clutil.hitman.process.ProcessControl#restart() */
