@@ -33,7 +33,7 @@
 	</licenses>
 
 	<scm>
-		<!-- scm:git:https://github.com/AntaTom/Clu-HitMan.git -->
+		<!-- Use https if release trouble, scm:git:https://github.com/AntaTom/Clu-HitMan.git -->
 		<connection>scm:git:git@github.com:AntaTom/Clu-HitMan.git</connection>
 		<developerConnection>scm:git:git@github.com:AntaTom/Clu-HitMan.git</developerConnection>
 		<url>https://github.com/AntaTom/Clu-HitMan</url>
